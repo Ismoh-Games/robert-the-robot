@@ -39,17 +39,19 @@ def bot():
     # as a Python webservice
     git_connection = Github(
         login_or_token=git_integration.get_access_token(
-            git_integration.get_installation(owner, repo_name).id
+            git_integration.get_repo_installation(owner, repo_name).id
         ).token
     )
     repo = git_connection.get_repo(f"{owner}/{repo_name}")
 
     issue = repo.get_issue(number=payload['pull_request']['number'])
 
+    issue.create_comment("Hello, I'm Robert the robot, I'm here to help you!")
+
     # Call meme-api to get a random meme
     response = requests.get(url='https://meme-api.herokuapp.com/gimme')
     if response.status_code != 200:
-        return 'ok'
+        return 'failed to get meme'
 
     # Get the best resolution meme
     meme_url = response.json()['preview'][-1]
